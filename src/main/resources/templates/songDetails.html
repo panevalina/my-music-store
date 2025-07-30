@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Songs Homepage - Welcome to My Music Store</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9f9f9;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            color: #333;
+        }
+        header h1 {
+            text-align: center;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        header h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #d9534f; /* црвена за грешки */
+            font-weight: 600;
+        }
+        main {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #444;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        select, input[type="submit"] {
+            font-size: 16px;
+            padding: 10px 12px;
+            border-radius: 5px;
+            border: 1.5px solid #ccc;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        select:focus, input[type="submit"]:focus {
+            border-color: #9b59b6;
+            outline: none;
+        }
+        input[type="submit"] {
+            background-color: #9b59b6;
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #7d3f98;
+        }
+        .song-item {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .song-info {
+            flex-grow: 1;
+        }
+        .song-title {
+            font-weight: 700;
+            color: #222;
+        }
+        .song-meta {
+            font-size: 14px;
+            color: #666;
+        }
+        .song-actions a {
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 14px;
+            color: #9b59b6;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+        .song-actions a:hover {
+            color: #7d3f98;
+        }
+        input[type="radio"] {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .add-song-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 700;
+            color: #9b59b6;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .add-song-link:hover {
+            color: #7d3f98;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to My Music Store</h1>
+    <h2 th:if="${hasError}">
+        <th:block th:text="${error}"></th:block>
+    </h2>
+</header>
+<main>
+    <h2>Choose an album:</h2>
+    <form th:method="get" th:action="@{/songs}">
+        <select name="id" required>
+            <option value="" disabled selected>Select an album</option>
+            <option th:each="album : ${albums}"
+                    th:value="${album.getId()}"
+                    th:text="${album.getName()}">
+            </option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Select a song to add performer:</h2>
+    <form th:method="POST" th:action="@{/artist}">
+        <div th:each="song : ${songs}" class="song-item">
+            <input type="radio" th:value="${song.getTrackId()}" name="trackId" required>
+            <div class="song-info">
+                <div class="song-title" th:text="${song.getTitle()}"></div>
+                <div class="song-meta">
+                    <span th:text="${song.getGenre()}"></span> |
+                    <span th:text="${song.getReleaseYear()}"></span> |
+                    <span th:text="${song.getAlbum().getName()}"></span>
+                </div>
+            </div>
+            <div class="song-actions" th:if="${role}=='ADMIN'">
+                <a th:href="@{'/songs/edit-form/{id}'(id=${song.getId()})}">Update</a>
+                <a th:href="@{'/songs/delete/{id}'(id=${song.getId()})}">Delete</a>
+            </div>
+        </div>
+        <input type="submit" value="Add Performer">
+    </form>
+
+    <a href="/songs/add-form" class="add-song-link">Add a new song</a>
+</main>
+</body>
+</html>

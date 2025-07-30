@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new song</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        form {
+            background: white;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #444;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border: 1.5px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: #9b59b6;
+            outline: none;
+        }
+        input[type="submit"] {
+            background-color: #9b59b6;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #7d3f98;
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1 th:text="${wantedSong == null} ? 'Add New Song' : 'Edit Song'">Add New Song</h1>
+
+<th:block th:if="${wantedSong == null}">
+
+    <form th:method="POST" th:action="@{/songs/add}">
+        <label> Title
+            <input type="text" name="title" th:value="(${wantedSong} != null ? ${wantedSong.getTitle()} : '')" placeholder="Enter song title">
+        </label>
+
+        <label> TrackId
+            <input type="text" name="trackId" th:value="(${wantedSong} != null ? ${wantedSong.getTrackId()} : '')" placeholder="Enter track ID">
+        </label>
+
+        <label> Genre
+            <input type="text" name="genre" th:value="(${wantedSong} != null ? ${wantedSong.getGenre()} : '')" placeholder="Enter genre">
+        </label>
+
+        <label> Release Year
+            <input type="text" name="releaseYear" th:value="(${wantedSong} != null ? ${wantedSong.getReleaseYear()} : '')" placeholder="Enter release year">
+        </label>
+
+        <label>
+            Choose album
+            <select name="albumId">
+                <option value="" disabled selected>Select an album</option>
+                <option th:each="album : ${albums}"
+                        th:value="${album.getId()}"
+                        th:text="${album.getName()}">
+                </option>
+            </select>
+        </label>
+
+        <input type="submit" value="Add Song">
+    </form>
+</th:block>
+
+<th:block th:if="${wantedSong != null}">
+    <form th:method="POST" th:action="@{'/songs/edit/{id}'(id=${wantedSong.getId()})}">
+        <label> Title
+            <input type="text" name="title" th:value="(${wantedSong} != null ? ${wantedSong.getTitle()} : '')" placeholder="Enter song title">
+        </label>
+
+        <label> TrackId
+            <input type="text" name="trackId" th:value="(${wantedSong} != null ? ${wantedSong.getTrackId()} : '')" placeholder="Enter track ID">
+        </label>
+
+        <label> Genre
+            <input type="text" name="genre" th:value="(${wantedSong} != null ? ${wantedSong.getGenre()} : '')" placeholder="Enter genre">
+        </label>
+
+        <label> Release Year
+            <input type="text" name="releaseYear" th:value="(${wantedSong} != null ? ${wantedSong.getReleaseYear()} : '')" placeholder="Enter release year">
+        </label>
+
+        <label>
+            Choose album
+            <select name="albumId">
+                <option value="" disabled>Select an album</option>
+                <option th:each="album : ${albums}"
+                        th:value="${album.getId()}"
+                        th:text="${album.getName()}"
+                        th:selected="${album.getId()} == ${wantedSong.getAlbum().getId()}">
+                </option>
+            </select>
+        </label>
+
+        <input type="submit" value="Save Changes">
+    </form>
+</th:block>
+</body>
+</html>
